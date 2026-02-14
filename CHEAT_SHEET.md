@@ -164,3 +164,39 @@ Binds element attributes or component props to dynamic JavaScript expressions (s
 - Binding to non-standard/invalid attributes may not produce expected DOM behavior.
 - `v-bind` is one-way data flow; changes in the DOM do not update state (use `v-model` for input syncing).
 - Complex inline expressions can reduce readability and should be moved to computed values when they grow.
+
+---
+
+## `v-once`
+Renders an element/component once and skips future updates for that part of the template.
+
+### Prerequisites
+- Use it only for content that should remain static after first render.
+- The initial render data must already be available, since later reactive changes will be ignored.
+- Place it on the smallest safe subtree to avoid freezing more UI than intended.
+
+### Sample code
+```html
+<div id="app">
+  <h2 v-once>Welcome, {{ username }}</h2>
+  <p>Live counter: {{ counter }}</p>
+  <button @click="counter++">Increment</button>
+</div>
+
+<script type="module">
+  const { createApp, ref } = Vue;
+
+  createApp({
+    setup() {
+      const username = ref("Yasanka");
+      const counter = ref(0);
+      return { username, counter };
+    }
+  }).mount("#app");
+</script>
+```
+
+### Limitations
+- The `v-once` section will not react to state changes after the first render.
+- Not suitable for dynamic text, localization updates, or conditionally changing UI.
+- Misuse can cause stale UI that looks like reactivity is broken.
