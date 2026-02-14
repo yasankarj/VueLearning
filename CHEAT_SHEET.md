@@ -122,3 +122,45 @@ Renders a list by iterating over an array/object/range.
 - Using array index as `key` can cause rendering bugs during insert/reorder/remove.
 - Very large lists can be slow without virtualization/windowing.
 - Mutating nested structures incorrectly can lead to confusing update behavior.
+
+---
+
+## `v-bind`
+Binds element attributes or component props to dynamic JavaScript expressions (shorthand: `:`).
+
+### Prerequisites
+- The bound expression must exist in component state (`data`, `computed`, or `setup` return).
+- Use valid target attributes/props such as `src`, `href`, `disabled`, `class`, `style`.
+- For object/array binding (`class`/`style`), keep values in Vue-friendly structures (boolean flags or key-value maps).
+
+### Sample code
+```html
+<div id="app">
+  <img v-bind:src="imageUrl" v-bind:alt="imageAlt" width="140" />
+  <a :href="profileUrl" :title="tooltip">View Profile</a>
+  <button :disabled="isSaving">Save</button>
+  <p :class="{ active: isActive, muted: !isActive }">Status text</p>
+</div>
+
+<script type="module">
+  const { createApp, ref } = Vue;
+
+  createApp({
+    setup() {
+      const imageUrl = ref("https://picsum.photos/200");
+      const imageAlt = ref("Random preview image");
+      const profileUrl = ref("https://example.com/profile");
+      const tooltip = ref("Open user profile");
+      const isSaving = ref(false);
+      const isActive = ref(true);
+
+      return { imageUrl, imageAlt, profileUrl, tooltip, isSaving, isActive };
+    }
+  }).mount("#app");
+</script>
+```
+
+### Limitations
+- Binding to non-standard/invalid attributes may not produce expected DOM behavior.
+- `v-bind` is one-way data flow; changes in the DOM do not update state (use `v-model` for input syncing).
+- Complex inline expressions can reduce readability and should be moved to computed values when they grow.
