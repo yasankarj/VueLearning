@@ -200,3 +200,87 @@ Renders an element/component once and skips future updates for that part of the 
 - The `v-once` section will not react to state changes after the first render.
 - Not suitable for dynamic text, localization updates, or conditionally changing UI.
 - Misuse can cause stale UI that looks like reactivity is broken.
+
+---
+
+## `v-if`
+Conditionally renders an element/component by adding or removing it from the DOM.
+
+### Prerequisites
+- The condition must be a valid boolean expression in component state.
+- Use it when the element should not exist in the DOM while false.
+- Prefer wrapping with a parent or computed filter when mixing with `v-for`.
+
+### Sample code
+```html
+<div id="app">
+  <button @click="isOpen = !isOpen">Toggle</button>
+  <p v-if="isOpen">Panel is open.</p>
+  <p v-else>Panel is closed.</p>
+</div>
+
+<script type="module">
+  const { createApp, ref } = Vue;
+
+  createApp({
+    setup() {
+      const isOpen = ref(false);
+      return { isOpen };
+    }
+  }).mount("#app");
+</script>
+```
+
+### Limitations
+- Toggling frequently can be more expensive because it mounts/unmounts.
+- Component state inside the block is destroyed and recreated.
+- Transitions need `v-if`-aware setup to animate enter/leave.
+
+---
+
+## `v-show`
+Conditionally displays an element by toggling its `display` CSS property.
+
+### Prerequisites
+- The condition must be a valid boolean expression in component state.
+- The element always exists in the DOM; only visibility changes.
+- Best for elements that toggle often but should retain state.
+
+### Sample code
+```html
+<div id="app">
+  <button @click="isOpen = !isOpen">Toggle</button>
+  <p v-show="isOpen">Panel is open.</p>
+</div>
+
+<script type="module">
+  const { createApp, ref } = Vue;
+
+  createApp({
+    setup() {
+      const isOpen = ref(false);
+      return { isOpen };
+    }
+  }).mount("#app");
+</script>
+```
+
+### Limitations
+- Element still exists in the DOM, so it can affect layout/ARIA if not handled.
+- Initial render cost exists even when hidden.
+- Does not remove event listeners or component instances.
+
+---
+
+## `v-if` vs `v-show`
+Quick guide to choose the right directive.
+
+### Differences
+- `v-if`: Adds/removes from DOM (true conditional rendering).
+- `v-show`: Always in DOM, toggles `display: none`.
+- `v-if`: Destroys and recreates component state on toggle.
+- `v-show`: Preserves component state and DOM nodes.
+
+### Ideal use cases
+- `v-if`: Rarely toggled content, expensive components, conditional routing-style sections.
+- `v-show`: Frequently toggled UI like menus, tabs, and accordions.
