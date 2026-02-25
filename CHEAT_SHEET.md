@@ -203,6 +203,51 @@ Renders an element/component once and skips future updates for that part of the 
 
 ---
 
+## Computed Properties
+Derived values that automatically update when their reactive dependencies change.
+
+### Prerequisites
+- Use `computed` from Vue when a value depends on other reactive state.
+- Computed getters should be pure and fast (no side effects).
+- Access computed values directly in templates; no `.value` needed there.
+
+### Sample code
+```html
+<div id="app">
+  <input v-model="firstName" placeholder="First name" />
+  <input v-model="lastName" placeholder="Last name" />
+  <p>Full name: {{ fullName }}</p>
+  <p>Initials: {{ initials }}</p>
+</div>
+
+<script type="module">
+  const { createApp, ref, computed } = Vue;
+
+  createApp({
+    setup() {
+      const firstName = ref("Ada");
+      const lastName = ref("Lovelace");
+
+      const fullName = computed(() => `${firstName.value} ${lastName.value}`);
+      const initials = computed(() => {
+        const first = firstName.value.charAt(0).toUpperCase();
+        const last = lastName.value.charAt(0).toUpperCase();
+        return `${first}${last}`;
+      });
+
+      return { firstName, lastName, fullName, initials };
+    }
+  }).mount("#app");
+</script>
+```
+
+### Limitations
+- Avoid expensive work; computed values cache but still re-run when dependencies change.
+- Do not mutate state inside computed getters (use methods or watchers for effects).
+- If you need to pass arguments, use a method instead of computed.
+
+---
+
 ## `v-if`
 Conditionally renders an element/component by adding or removing it from the DOM.
 
