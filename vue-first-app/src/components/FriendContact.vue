@@ -46,11 +46,12 @@ export default {
             this.detailsAreVisible = !this.detailsAreVisible;
         },
         toggleFavorites() {
-            if (this.friendIsFavourite === '1') {
-                this.friendIsFavourite = '0';
-            } else {
-                this.friendIsFavourite = '1';
-            }
+            this.$emit('toggle-favourite-status');
+            // if (this.friendIsFavourite === '1') {
+            //     this.friendIsFavourite = '0';
+            // } else {
+            //     this.friendIsFavourite = '1';
+            // }
         }
     }
 }

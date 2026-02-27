@@ -6,7 +6,8 @@
         :name="friend.name"
         :phone-number="friend.phone" 
         :email-address="friend.email"
-        :is-favourite="friend.isFavourite">
+        :is-favourite="friend.isFavourite"
+        @toggle-favourite-status="toggleFavouriteStatus">
       </friend-contact>
     </ul>
   </section>
