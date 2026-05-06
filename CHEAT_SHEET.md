@@ -329,3 +329,55 @@ Quick guide to choose the right directive.
 ### Ideal use cases
 - `v-if`: Rarely toggled content, expensive components, conditional routing-style sections.
 - `v-show`: Frequently toggled UI like menus, tabs, and accordions.
+
+---
+
+## `provide` / `inject`
+Passes data or functions from an ancestor component to any deep descendant without prop drilling through every intermediate component.
+
+### Prerequisites
+- Use `provide` in an ancestor component and `inject` in descendants that need the value.
+- Prefer `Symbol` keys in larger apps to avoid key name collisions.
+- For reactive updates, provide reactive values (`ref`, `reactive`, or computed), not plain snapshots.
+
+### Sample code
+```js
+// Parent.vue
+<script setup>
+import { ref, provide } from "vue";
+
+const theme = ref("dark");
+const changeTheme = (nextTheme) => {
+  theme.value = nextTheme;
+};
+
+provide("theme", theme);
+provide("changeTheme", changeTheme);
+</script>
+```
+
+```js
+// DeepChild.vue
+<script setup>
+import { inject } from "vue";
+
+const theme = inject("theme");
+const changeTheme = inject("changeTheme");
+</script>
+
+<template>
+  <p>Current theme: {{ theme }}</p>
+  <button @click="changeTheme('light')">Switch to Light</button>
+</template>
+```
+
+### Limitations
+- Can hide dependencies because injected values are not visible in the parent template API.
+- Tight coupling may happen if many descendants depend on implicit keys.
+- For large shared state, a dedicated store (for example Pinia) is usually easier to scale and debug.
+
+### `provide/inject` vs Props/Events vs Pinia
+- **Props + emits**: Best default for direct parent-child communication and clear, explicit data flow.
+- **`provide` / `inject`**: Best for shared dependencies across deep component trees (for example theme, form context, service objects).
+- **Pinia (store)**: Best for app-wide/shared business state, async actions, and devtools-friendly debugging.
+- **Rule of thumb**: Start with props/emits, use `provide/inject` to avoid prop drilling, move to Pinia when state becomes cross-feature or hard to trace.
